@@ -1,0 +1,169 @@
+<index.html>
+<head>
+    <title>Advanced Age Calculator</title>
+    <style>
+        body{
+            font-family: Arial, sans-serif;
+            background:#f2f4f8;
+            padding:40px;
+            text-align:center;
+        }
+        .box{
+            background:white;
+            padding:30px;
+            max-width:600px;
+            margin:auto;
+            border-radius:10px;
+            box-shadow:0 0 15px rgba(0,0,0,0.1);
+        }
+        input,button{
+            padding:10px;
+            margin:8px;
+            font-size:15px;
+        }
+        button{
+            background:#007bff;
+            color:white;
+            border:none;
+            cursor:pointer;
+        }
+        button:hover{
+            background:#0056b3;
+        }
+        .result{
+            text-align:left;
+            margin-top:20px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="box">
+    <h2>Age Calculator</h2>
+
+    <p><b>Date of Birth:</b></p>
+    <input type="date" id="dobDate">
+    <input type="time" id="dobTime">
+
+    <p><b>Age at Date:</b></p>
+    <input type="date" id="targetDate">
+    <input type="time" id="targetTime">
+
+    <br>
+    <button onclick="calculateAge()">Calculate</button>
+
+    <div class="result" id="result"></div>
+</div>
+
+<script>
+function calculateAge(){
+
+    let result = document.getElementById("result");
+
+    let dobDate = document.getElementById("dobDate").value;
+    let dobTime = document.getElementById("dobTime").value;
+    let targetDate = document.getElementById("targetDate").value;
+    let targetTime = document.getElementById("targetTime").value;
+
+    if(!dobDate){
+        result.innerHTML = "Please select Date of Birth!";
+        return;
+    }
+
+    if(!dobTime) dobTime = "00:00";
+    let dob = new Date(dobDate + "T" + dobTime);
+
+    let target;
+    if(!targetDate){
+        target = new Date();
+    } else {
+        if(!targetTime) targetTime = "00:00";
+        target = new Date(targetDate + "T" + targetTime);
+    }
+
+    if(target < dob){
+        result.innerHTML = "Target date cannot be before DOB!";
+        return;
+    }
+
+    let diff = target - dob;
+
+    let totalSeconds = Math.floor(diff/1000);
+    let totalMinutes = Math.floor(totalSeconds/60);
+    let totalHours = Math.floor(totalMinutes/60);
+    let totalDays = Math.floor(totalHours/24);
+    let totalWeeks = Math.floor(totalDays/7);
+
+    let seconds = totalSeconds % 60;
+    let minutes = totalMinutes % 60;
+    let hours = totalHours % 24;
+
+    // Exact Years Months Days
+    let years = target.getFullYear() - dob.getFullYear();
+    let months = target.getMonth() - dob.getMonth();
+    let days = target.getDate() - dob.getDate();
+
+    if(days < 0){
+        months--;
+        let prevMonth = new Date(target.getFullYear(), target.getMonth(), 0);
+        days += prevMonth.getDate();
+    }
+
+    if(months < 0){
+        years--;
+        months += 12;
+    }
+
+    // Next Birthday
+    let nextBirthday = new Date(target.getFullYear(), dob.getMonth(), dob.getDate());
+    if(nextBirthday < target){
+        nextBirthday.setFullYear(target.getFullYear() + 1);
+    }
+    let daysToBirthday = Math.ceil((nextBirthday - target)/(1000*60*60*24));
+
+    result.innerHTML = `
+        <b>Exact Age:</b><br>
+        ${years} Years, ${months} Months, ${days} Days<br><br>
+
+        <b>Age in Different Units:</b><br>
+        ${totalWeeks} Weeks<br>
+        ${totalDays} Days<br>
+        ${totalHours} Hours<br>
+        ${totalMinutes} Minutes<br>
+        ${totalSeconds} Seconds<br><br>
+
+        <b>Next Birthday In:</b><br>
+        ${daysToBirthday} Days
+    `;
+}
+</script>
+
+</body>
+</html>
+<hr style="margin:25px 0;">
+
+<div style="font-size:14px; opacity:0.8; line-height:1.6;">
+    <p id="birthdayMessage">
+        <!-- Next birthday message will appear here -->
+    </p>
+
+    <p>
+        This age calculator computes your exact age in years, months, days,
+        hours, minutes, and seconds based on the provided date and time.
+    </p>
+
+    <p>
+        If no time is selected, the system automatically considers 12:00 AM.
+        If no target date is provided, the current date and time are used.
+    </p>
+
+    <p style="margin-top:15px;">
+        🔥 Developed by Your Name
+    </p>
+</div>
+
+    </p>
+</div>
+<p>
+    ⚠ This calculator is for informational purposes only.
+</p>
